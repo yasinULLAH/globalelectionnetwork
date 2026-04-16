@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { CANDIDATES, ELECTION_META, LIVE_UPDATES, ELECTIONS } from '@/lib/mockData';
+import { ELECTIONS } from '@/lib/mockData';
 import type { Candidate, LiveUpdate, User, ElectionConfig } from '@/types';
 
 interface AppState {
@@ -15,38 +15,32 @@ interface AppState {
   likedCandidates: Set<string>;
   activeElection: ElectionConfig;
   setActiveElection: (e: ElectionConfig) => void;
-  login: (email: string, password: string, role: string) => boolean;
+  login: (email: string, password: string, role: string) => Promise<boolean>;
   logout: () => void;
   toggleLike: (candidateId: string) => void;
 }
 
 const AppContext = createContext<AppState | null>(null);
 
-const MOCK_USERS: User[] = [
-  { id: 'u1', name: 'Admin Malik', email: 'admin@gen.pk', role: 'admin' },
-  { id: 'u2', name: 'Yasir Ali Shah', email: 'yasir.shah@gen.pk', role: 'observer', observerId: 'obs1' },
-  { id: 'u3', name: 'Sana Batool', email: 'sana.batool@gen.pk', role: 'observer', observerId: 'obs2' },
-];
-
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [candidates, setCandidates] = useState<Candidate[]>(CANDIDATES);
-  const [totalVotesCast, setTotalVotesCast] = useState(ELECTION_META.totalVotesCast);
-  const [seatsDeclared, setSeatsDeclared] = useState(ELECTION_META.seatsDeclared);
-  const [nationalTurnout, setNationalTurnout] = useState(ELECTION_META.nationalTurnout);
-  const [liveUpdates, setLiveUpdates] = useState<LiveUpdate[]>(LIVE_UPDATES);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [totalVotesCast, setTotalVotesCast] = useState(0);
+  const [seatsDeclared, setSeatsDeclared] = useState(0);
+  const [nationalTurnout, setNationalTurnout] = useState(0);
+  const [liveUpdates, setLiveUpdates] = useState<LiveUpdate[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [likedCandidates, setLikedCandidates] = useState<Set<string>>(new Set());
-  const [isLive] = useState(true);
+  const [isLive, setIsLive] = useState(false);
   const [activeElection, setActiveElection] = useState<ElectionConfig>(ELECTIONS[0]);
 
-  // Load real active election from DB so IDs match for API calls
+  // Load real active election from DB
   useEffect(() => {
     fetch('/api/elections/active')
       .then(r => r.json())
       .then(data => {
         if (data.election) {
           const e = data.election;
-          setActiveElection({
+          const electionConfig: ElectionConfig = {
             id: e.id,
             name: e.name,
             country: e.country,
@@ -59,67 +53,53 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             totalRegisteredVoters: e.total_registered_voters,
             description: e.description,
             flagEmoji: e.flag_emoji,
-          });
+          };
+          setActiveElection(electionConfig);
+          setIsLive(e.status === 'live');
+
+          // Only fetch voting data if election is live
+          if (e.status === 'live') {
+            // Fetch candidates
+            fetch(`/api/candidates?electionId=${e.id}`)
+              .then(r => r.json())
+              .then(data => {
+                if (data.candidates) {
+                  setCandidates(data.candidates);
+                }
+              })
+              .catch(() => {});
+
+            // Fetch live updates
+            fetch(`/api/live-updates?electionId=${e.id}`)
+              .then(r => r.json())
+              .then(data => {
+                if (data.updates) {
+                  setLiveUpdates(data.updates);
+                }
+              })
+              .catch(() => {});
+          }
         }
       })
       .catch(() => { /* keep mockData fallback */ });
   }, []);
 
-  useEffect(() => {
-    const tick = setInterval(() => {
-      const newVotes = Math.floor(Math.random() * 1200) + 300;
-      setTotalVotesCast(v => v + newVotes);
-      setNationalTurnout(t => Math.min(t + 0.01, 65));
-
-      setCandidates(prev =>
-        prev.map(c => ({
-          ...c,
-          votes: c.votes + Math.floor(Math.random() * 80),
-        }))
-      );
-
-      if (Math.random() < 0.15) {
-        setSeatsDeclared(v => Math.min(v + 1, ELECTION_META.totalSeats));
+  const login = useCallback(async (email: string, password: string, role: string): Promise<boolean> => {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, role }),
+      });
+      const data = await res.json();
+      if (data.user) {
+        setUser(data.user);
+        return true;
       }
-    }, 3000);
-
-    return () => clearInterval(tick);
-  }, []);
-
-  useEffect(() => {
-    const newsFeed = setInterval(() => {
-      const messages = [
-        'Observer reported results from Karachi East polling station',
-        'PTI widens lead in KPK by 12,000 votes',
-        'Turnout in Punjab crosses 50%',
-        'PML-N secures another seat in Lahore',
-        'NA-240 Karachi East: 210/215 stations reporting',
-        'All quiet at Skardu polling stations',
-      ];
-      const types: LiveUpdate['type'][] = ['result', 'update', 'milestone', 'alert'];
-      const newUpdate: LiveUpdate = {
-        id: `live-${Date.now()}`,
-        message: messages[Math.floor(Math.random() * messages.length)],
-        timestamp: new Date().toISOString(),
-        type: types[Math.floor(Math.random() * types.length)],
-      };
-      setLiveUpdates(prev => [newUpdate, ...prev.slice(0, 19)]);
-    }, 8000);
-
-    return () => clearInterval(newsFeed);
-  }, []);
-
-  const login = useCallback((email: string, _password: string, role: string): boolean => {
-    const found = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase() && u.role === role);
-    if (found) {
-      setUser(found);
-      return true;
+      return false;
+    } catch {
+      return false;
     }
-    if (email && role === 'admin') {
-      setUser({ id: 'u_admin', name: 'Super Admin', email, role: 'admin' });
-      return true;
-    }
-    return false;
   }, []);
 
   const logout = useCallback(() => setUser(null), []);

@@ -59,9 +59,7 @@ export default function LoginPage() {
     if (!email) { setError('Email is required'); return; }
 
     setLoading(true);
-    await new Promise(r => setTimeout(r, 600));
-
-    const ok = login(email, password, role);
+    const ok = await login(email, password, role);
     if (ok) {
       router.push(config.redirect);
     } else {

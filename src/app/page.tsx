@@ -8,7 +8,6 @@ import PartyBarChart from '@/components/charts/PartyBarChart';
 import VotePieChart from '@/components/charts/VotePieChart';
 import TurnoutAreaChart from '@/components/charts/TurnoutAreaChart';
 import { useApp } from '@/context/AppContext';
-import { PARTIES, REGIONAL_SUMMARIES, CONSTITUENCIES, ELECTION_META, OBSERVERS } from '@/lib/mockData';
 import { formatNumber, formatPercent, timeAgo, getPartyById } from '@/lib/utils';
 import type { Candidate } from '@/types';
 
@@ -73,13 +72,41 @@ function TopCandidateCard({ candidate, rank, totalVotes }: { candidate: Candidat
 }
 
 export default function HomePage() {
-  const { candidates, totalVotesCast, seatsDeclared, nationalTurnout, liveUpdates, activeElection } = useApp();
+  const { candidates, totalVotesCast, seatsDeclared, nationalTurnout, liveUpdates, activeElection, isLive } = useApp();
+  const [parties, setParties] = React.useState<any[]>([]);
+  const [constituencies, setConstituencies] = React.useState<any[]>([]);
+  const [observers, setObservers] = React.useState<any[]>([]);
+  const [regionalSummaries, setRegionalSummaries] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (activeElection.id) {
+      // Fetch parties
+      fetch(`/api/parties?electionId=${activeElection.id}`)
+        .then(r => r.json())
+        .then(data => setParties(data.parties || []))
+        .catch(() => {});
+
+      // Fetch constituencies
+      fetch(`/api/constituencies?electionId=${activeElection.id}`)
+        .then(r => r.json())
+        .then(data => setConstituencies(data.constituencies || []))
+        .catch(() => {});
+
+      // Fetch observers
+      fetch(`/api/observers?electionId=${activeElection.id}`)
+        .then(r => r.json())
+        .then(data => setObservers(data.observers || []))
+        .catch(() => {});
+    }
+  }, [activeElection.id]);
 
   const topCandidates    = [...candidates].sort((a, b) => b.votes - a.votes).slice(0, 6);
   const totalPartiesVotes = candidates.reduce((s, c) => s + c.votes, 0);
-  const reportedPct = ((CONSTITUENCIES.reduce((s, c) => s + c.reportedStations, 0) /
-    CONSTITUENCIES.reduce((s, c) => s + c.totalStations, 0)) * 100).toFixed(1);
-  const leadingParty = PARTIES.sort((a, b) => b.seats - a.seats)[0];
+  const reportedPct = constituencies.length > 0 
+    ? ((constituencies.reduce((s: number, c: any) => s + (c.reported_stations || 0), 0) /
+      constituencies.reduce((s: number, c: any) => s + (c.total_stations || 0), 0)) * 100).toFixed(1)
+    : '0.0';
+  const leadingParty = parties.sort((a, b) => b.seats - a.seats)[0];
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
@@ -131,13 +158,22 @@ export default function HomePage() {
           </p>
 
           {/* Stat cards — scrollable on mobile */}
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-none">
-            <HeroStat icon="🗳️" value={formatNumber(totalVotesCast)} label="Votes Cast" accent="text-green-300" />
-            <HeroStat icon="🏆" value={`${seatsDeclared}/${activeElection.totalSeats}`} label="Seats Declared" />
-            <HeroStat icon="📈" value={`${nationalTurnout.toFixed(1)}%`} label="Voter Turnout" accent="text-yellow-300" />
-            <HeroStat icon="📡" value={`${reportedPct}%`} label="Stations Rep." />
-            <HeroStat icon="👁️" value={`${OBSERVERS.length}`} label="Observers" />
-          </div>
+          {isLive ? (
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-none">
+              <HeroStat icon="🗳️" value={formatNumber(totalVotesCast)} label="Votes Cast" accent="text-green-300" />
+              <HeroStat icon="🏆" value={`${seatsDeclared}/${activeElection.totalSeats}`} label="Seats Declared" />
+              <HeroStat icon="📈" value={`${nationalTurnout.toFixed(1)}%`} label="Voter Turnout" accent="text-yellow-300" />
+              <HeroStat icon="📡" value={`${reportedPct}%`} label="Stations Rep." />
+              <HeroStat icon="👁️" value={`${observers.length}`} label="Observers" />
+            </div>
+          ) : (
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-none">
+              <HeroStat icon="📅" value={activeElection.date} label="Election Date" accent="text-amber-300" />
+              <HeroStat icon="👥" value={formatNumber(activeElection.totalRegisteredVoters)} label="Registered Voters" accent="text-blue-300" />
+              <HeroStat icon="🏛️" value={`${activeElection.totalSeats}`} label="Total Seats" accent="text-purple-300" />
+              <HeroStat icon="👁️" value={`${observers.length}`} label="Observers" />
+            </div>
+          )}
 
           {/* Leading party strip */}
           {leadingParty && (
@@ -163,12 +199,12 @@ export default function HomePage() {
           </div>
           {/* Stacked bar */}
           <div className="flex h-10 rounded-2xl overflow-hidden gap-[2px] shadow-inner bg-slate-100 mb-4">
-            {PARTIES.filter(p => p.seats > 0).sort((a, b) => b.seats - a.seats).map(p => {
+            {parties.filter((p: any) => p.seats > 0).sort((a: any, b: any) => b.seats - a.seats).map((p: any) => {
               const w = (p.seats / activeElection.totalSeats) * 100;
               return (
                 <div key={p.id} className="h-full flex items-center justify-center text-white text-[10px] font-black transition-all duration-700 first:rounded-l-2xl last:rounded-r-2xl"
                   style={{ width: `${w}%`, background: p.color }}
-                  title={`${p.shortName}: ${p.seats}`}>
+                  title={`${p.short_name}: ${p.seats}`}>
                   {w > 6 && p.seats}
                 </div>
               );
@@ -176,10 +212,10 @@ export default function HomePage() {
           </div>
           {/* Legend */}
           <div className="flex flex-wrap gap-x-5 gap-y-2">
-            {PARTIES.filter(p => p.seats > 0).sort((a, b) => b.seats - a.seats).map(p => (
+            {parties.filter((p: any) => p.seats > 0).sort((a: any, b: any) => b.seats - a.seats).map((p: any) => (
               <div key={p.id} className="flex items-center gap-2 text-xs">
                 <span className="w-3 h-3 rounded" style={{ background: p.color }} />
-                <span className="font-bold text-slate-700">{p.shortName}</span>
+                <span className="font-bold text-slate-700">{p.short_name}</span>
                 <span className="font-black text-slate-900 num">{p.seats}</span>
               </div>
             ))}
@@ -238,7 +274,7 @@ export default function HomePage() {
           <div className="card p-5">
             <h2 className="section-title mb-4">🗺️ Regional Breakdown</h2>
             <div className="space-y-5">
-              {REGIONAL_SUMMARIES.map(r => (
+              {regionalSummaries.length > 0 ? regionalSummaries.map((r: any) => (
                 <div key={r.provinceId}>
                   <div className="flex items-start justify-between mb-2">
                     <div>
@@ -247,14 +283,16 @@ export default function HomePage() {
                     </div>
                     <div className="text-right">
                       <p className="text-xs font-black" style={{ color: r.leadingPartyColor }}>{r.leadingParty}</p>
-                      <p className="text-xs text-slate-400">{formatPercent(r.turnout)} turnout</p>
+                      <p className="text-xs text-slate-400">{formatPercent(r.turnout || 0)} turnout</p>
                     </div>
                   </div>
                   <div className="progress-bar h-2">
                     <div className="progress-fill" style={{ width: `${(r.seatsDeclared / r.seatsTotal) * 100}%`, background: r.leadingPartyColor }} />
                   </div>
                 </div>
-              ))}
+              )) : (
+                <p className="text-sm text-slate-400">No regional data available</p>
+              )}
             </div>
           </div>
 

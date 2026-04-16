@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { queryOne } from '@/lib/db';
+import { createHash } from 'crypto';
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +20,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const passwordMatch = user.password === password ||
+    // Hash the password for comparison (SHA-256 as used in observers)
+    const passwordHash = createHash('sha256').update(password).digest('hex');
+    
+    // Check against hashed password or the old default password
+    const passwordMatch = user.password === passwordHash ||
+      user.password === password ||
       user.password === 'change-in-production';
 
     if (!passwordMatch) {
