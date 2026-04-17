@@ -1,18 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { PARTIES } from '@/lib/mockData';
+import { useApp } from '@/context/AppContext';
 import { formatNumber } from '@/lib/utils';
 
 interface Props { height?: number; }
 
-const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { name: string; shortName: string; color: string; value: number } }> }) => {
+const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: Array<{ payload: { name: string; short_name: string; color: string; value: number } }> }) => {
   if (active && payload?.length) {
     const d = payload[0].payload;
     return (
       <div className="bg-white border border-slate-200 rounded-xl p-3 text-sm shadow-lg">
-        <div className="font-bold mb-1" style={{ color: d.color }}>{d.shortName}</div>
+        <div className="font-bold mb-1" style={{ color: d.color }}>{d.short_name}</div>
         <div className="text-slate-600">{formatNumber(d.value)} votes</div>
       </div>
     );
@@ -37,10 +37,25 @@ const renderLegend = (props: any) => {
 };
 
 export default function VotePieChart({ height = 280 }: Props) {
-  const data = PARTIES.filter(p => p.seats > 0).map(p => ({
-    ...p,
-    value: p.totalVotes,
-  }));
+  const { activeElection, candidates } = useApp();
+  const [parties, setParties] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (activeElection.id) {
+      fetch(`/api/parties?electionId=${activeElection.id}`)
+        .then(r => r.json())
+        .then(d => setParties(d.parties || []))
+        .catch(() => {});
+    }
+  }, [activeElection.id]);
+
+  // Compute votes per party from candidates
+  const data = parties.map(p => {
+    const votes = candidates.filter(c => c.partyId === p.id).reduce((s, c) => s + (c.votes || 0), 0);
+    return { ...p, value: votes, short_name: p.short_name || p.name };
+  }).filter(p => p.value > 0);
+
+  if (!data.length) return <div className="flex items-center justify-center h-full text-slate-400 text-sm">No vote data</div>;
 
   return (
     <ResponsiveContainer width="100%" height={height}>
@@ -53,10 +68,10 @@ export default function VotePieChart({ height = 280 }: Props) {
           outerRadius={95}
           paddingAngle={2}
           dataKey="value"
-          nameKey="shortName"
+          nameKey="short_name"
         >
-          {data.map(entry => (
-            <Cell key={entry.id} fill={entry.color} fillOpacity={0.9} stroke="transparent" />
+          {data.map((entry: any, i: number) => (
+            <Cell key={i} fill={entry.color || '#16a34a'} fillOpacity={0.9} stroke="transparent" />
           ))}
         </Pie>
         <Tooltip content={<CustomTooltip />} />

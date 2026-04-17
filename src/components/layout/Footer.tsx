@@ -17,7 +17,7 @@ export default function Footer() {
 
   const siteName  = s.site_name    || 'Global Election Network';
   const about     = s.footer_about || 'Real-time, transparent election monitoring.';
-  const email     = s.footer_email;
+  const email     = s.footer_email || 'info@globalelectionnetwork.com';
   const phone     = s.footer_phone;
   const address   = s.footer_address;
   const facebook  = s.footer_facebook;
@@ -70,7 +70,8 @@ export default function Footer() {
               <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
               <li><Link href="/results" className="hover:text-white transition-colors">Results</Link></li>
               <li><Link href="/candidates" className="hover:text-white transition-colors">Candidates</Link></li>
-              <li><Link href="/parties" className="hover:text-white transition-colors">Parties</Link></li>
+              <li><Link href="/news" className="hover:text-white transition-colors">News</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
               {navPages.map((p: { slug: string; title: string }) => (
                 <li key={p.slug}>
                   <Link href={`/p/${p.slug}`} className="hover:text-white transition-colors">{p.title}</Link>
@@ -109,9 +110,9 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-white/30 text-xs text-center sm:text-left">{copyright}</p>
           <div className="flex items-center gap-4 text-xs text-white/30">
-            <Link href="/p/about" className="hover:text-white/60 transition-colors">About</Link>
+            <Link href="/about" className="hover:text-white/60 transition-colors">About</Link>
             <span>·</span>
-            <Link href="/observers" className="hover:text-white/60 transition-colors">Observers</Link>
+            <Link href="/observer" className="hover:text-white/60 transition-colors">Observers</Link>
             <span>·</span>
             <Link href="/login" className="hover:text-white/60 transition-colors">Admin</Link>
           </div>

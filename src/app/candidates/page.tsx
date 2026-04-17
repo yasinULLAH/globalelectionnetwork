@@ -1,18 +1,27 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import CandidateCard from '@/components/dashboard/CandidateCard';
+import Footer from '@/components/layout/Footer';
 import { useApp } from '@/context/AppContext';
-import { CONSTITUENCIES, PARTIES } from '@/lib/mockData';
 import { getPartyById } from '@/lib/utils';
 
 export default function CandidatesPage() {
-  const { candidates } = useApp();
+  const { candidates, activeElection } = useApp();
   const [search, setSearch] = useState('');
   const [filterParty, setFilterParty] = useState('all');
   const [filterConstituency, setFilterConstituency] = useState('all');
   const [sortBy, setSortBy] = useState<'votes' | 'likes' | 'name'>('votes');
+  const [parties, setParties] = useState<any[]>([]);
+  const [constituencies, setConstituencies] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (activeElection.id) {
+      fetch(`/api/parties?electionId=${activeElection.id}`).then(r => r.json()).then(d => setParties(d.parties || [])).catch(() => {});
+      fetch(`/api/constituencies?electionId=${activeElection.id}`).then(r => r.json()).then(d => setConstituencies(d.constituencies || [])).catch(() => {});
+    }
+  }, [activeElection.id]);
 
   const totalVotes = candidates.reduce((s, c) => s + c.votes, 0);
 
@@ -57,11 +66,11 @@ export default function CandidatesPage() {
           />
           <select value={filterParty} onChange={e => setFilterParty(e.target.value)} className="input-field w-auto">
             <option value="all">All Parties</option>
-            {PARTIES.map(p => <option key={p.id} value={p.id}>{p.shortName}</option>)}
+            {parties.map((p: any) => <option key={p.id} value={p.id}>{p.short_name || p.name}</option>)}
           </select>
           <select value={filterConstituency} onChange={e => setFilterConstituency(e.target.value)} className="input-field w-auto">
             <option value="all">All Constituencies</option>
-            {CONSTITUENCIES.map(c => <option key={c.id} value={c.id}>{c.code} – {c.name}</option>)}
+            {constituencies.map((c: any) => <option key={c.id} value={c.id}>{c.code} – {c.name}</option>)}
           </select>
           <select value={sortBy} onChange={e => setSortBy(e.target.value as 'votes' | 'likes' | 'name')} className="input-field w-auto">
             <option value="votes">Most Votes</option>
@@ -70,17 +79,25 @@ export default function CandidatesPage() {
           </select>
         </div>
 
+        {candidates.length === 0 && (
+          <div className="text-center py-20">
+            <div className="text-5xl mb-3">👥</div>
+            <p className="text-lg font-bold text-slate-700">No candidates found</p>
+            <p className="text-sm text-slate-400 mt-1">Candidates will appear here once added to the election</p>
+          </div>
+        )}
+
         {/* Grouped by constituency */}
-        {filterConstituency === 'all' && filterParty === 'all' && !search ? (
+        {candidates.length > 0 && filterConstituency === 'all' && filterParty === 'all' && !search ? (
           <div className="space-y-8">
-            {CONSTITUENCIES.map(con => {
+            {constituencies.map((con: any) => {
               const conCandidates = [...candidates]
                 .filter(c => c.constituencyId === con.id)
                 .sort((a, b) => b.votes - a.votes);
               if (!conCandidates.length) return null;
               const conTotal = conCandidates.reduce((s, c) => s + c.votes, 0);
               const winner = conCandidates[0];
-              const winnerParty = getPartyById(winner.partyId);
+              const winnerParty = parties.find((p: any) => p.id === winner?.partyId) || getPartyById(winner?.partyId);
 
               return (
                 <div key={con.id}>
@@ -89,10 +106,10 @@ export default function CandidatesPage() {
                       <div className="flex items-center gap-2.5 flex-wrap">
                         <span className="font-mono text-[11px] font-black bg-slate-900 text-white px-2.5 py-1 rounded-lg">{con.code}</span>
                         <h2 className="text-lg font-extrabold text-slate-900">{con.name}</h2>
-                        <span className="text-xs text-slate-400">{con.district} · {con.provinceId.toUpperCase()}</span>
+                        <span className="text-xs text-slate-400">{con.district}</span>
                       </div>
                       <p className="text-xs text-slate-400 mt-1">
-                        {con.reportedStations}/{con.totalStations} stations · {con.registeredVoters.toLocaleString()} voters
+                        {con.registered_voters?.toLocaleString() || '—'} voters
                       </p>
                     </div>
                     {winner && (
@@ -127,6 +144,7 @@ export default function CandidatesPage() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

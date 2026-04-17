@@ -57,19 +57,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           setActiveElection(electionConfig);
           setIsLive(e.status === 'live');
 
-          // Only fetch voting data if election is live
-          if (e.status === 'live') {
-            // Fetch candidates
-            fetch(`/api/candidates?electionId=${e.id}`)
-              .then(r => r.json())
-              .then(data => {
-                if (data.candidates) {
-                  setCandidates(data.candidates);
-                }
-              })
-              .catch(() => {});
+          // Always fetch candidates
+          fetch(`/api/candidates?electionId=${e.id}`)
+            .then(r => r.json())
+            .then(data => {
+              if (data.candidates) {
+                setCandidates(data.candidates);
+                // Compute totalVotesCast from candidate votes
+                const total = data.candidates.reduce((s: number, c: { votes: number }) => s + (c.votes || 0), 0);
+                setTotalVotesCast(total);
+                // Compute seats declared (candidates with votes > 0 per constituency, count unique constituencies)
+                const withVotes = new Set(data.candidates.filter((c: { votes: number }) => c.votes > 0).map((c: { constituencyId: string }) => c.constituencyId));
+                setSeatsDeclared(withVotes.size);
+              }
+            })
+            .catch(() => {});
 
-            // Fetch live updates
+          // Only fetch live updates if election is live
+          if (e.status === 'live') {
             fetch(`/api/live-updates?electionId=${e.id}`)
               .then(r => r.json())
               .then(data => {

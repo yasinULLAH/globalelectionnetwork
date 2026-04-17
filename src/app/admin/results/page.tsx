@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useApp } from '@/context/AppContext';
-import { Check, AlertCircle, Trash2, ShieldCheck, Flag } from 'lucide-react';
+import { Check, AlertCircle, Trash2, ShieldCheck, Flag, Plus, X } from 'lucide-react';
 
 interface Result {
   id: string; candidate_name: string; polling_station_name: string;
@@ -10,6 +10,12 @@ interface Result {
   verified: boolean; flagged: boolean;
   party_color?: string; party_short?: string;
 }
+
+const EMPTY_FORM = {
+  candidate_name: '', candidate_id: '', party_id: '', constituency_id: '',
+  polling_station_name: '', polling_station_number: '',
+  votes: '', date: new Date().toISOString().slice(0,10), time: new Date().toTimeString().slice(0,5),
+};
 
 export default function AdminResultsPage() {
   const { activeElection } = useApp();
@@ -20,6 +26,10 @@ export default function AdminResultsPage() {
   const [filter, setFilter]   = useState<'all'|'pending'|'verified'|'flagged'>('all');
   const [toast, setToast]     = useState<{msg:string;ok:boolean}|null>(null);
   const [acting, setActing]   = useState<string|null>(null);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm]         = useState(EMPTY_FORM);
+  const [saving, setSaving]     = useState(false);
+  const [candidates, setCandidates] = useState<any[]>([]);
 
   const showToast = (msg: string, ok = true) => { setToast({msg,ok}); setTimeout(()=>setToast(null),3000); };
 
@@ -33,6 +43,44 @@ export default function AdminResultsPage() {
   }, [electionId]);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    if (electionId) {
+      fetch(`/api/candidates?electionId=${electionId}`).then(r => r.json()).then(d => setCandidates(d.candidates || [])).catch(() => {});
+    }
+  }, [electionId]);
+
+  const handleAddResult = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const submittedAt = new Date(`${form.date}T${form.time}`).toISOString();
+      const res = await fetch('/api/results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          electionId,
+          candidateId: form.candidate_id || null,
+          candidateName: form.candidate_name,
+          partyId: form.party_id || null,
+          constituencyId: form.constituency_id || null,
+          pollingStationName: `${form.polling_station_number ? form.polling_station_number + ' - ' : ''}${form.polling_station_name}`,
+          votes: parseInt(form.votes),
+          submittedAt,
+          submittedBy: 'admin',
+        }),
+      });
+      if (!res.ok) throw new Error('Failed');
+      showToast('Result added successfully');
+      setShowForm(false);
+      setForm(EMPTY_FORM);
+      load();
+    } catch {
+      showToast('Failed to add result', false);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const filtered = results.filter(r => {
     if (filter === 'pending')  return !r.verified && !r.flagged;
@@ -86,15 +134,85 @@ export default function AdminResultsPage() {
               <span className="text-amber-600 font-semibold">{results.filter(r=>r.flagged).length} flagged</span>
             </p>
           </div>
-          <div className="flex gap-1">
-            {(['all','pending','verified','flagged'] as const).map(f => (
-              <button key={f} onClick={() => setFilter(f)}
-                className={`px-3 py-2 rounded-xl text-xs font-semibold capitalize transition-all border ${
-                  filter === f ? 'bg-sky-50 text-sky-700 border-sky-200' : 'border-slate-200 text-slate-500 hover:border-slate-300'
-                }`}>{f}</button>
-            ))}
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex gap-1">
+              {(['all','pending','verified','flagged'] as const).map(f => (
+                <button key={f} onClick={() => setFilter(f)}
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold capitalize transition-all border ${
+                    filter === f ? 'bg-sky-50 text-sky-700 border-sky-200' : 'border-slate-200 text-slate-500 hover:border-slate-300'
+                  }`}>{f}</button>
+              ))}
+            </div>
+            <button onClick={() => setShowForm(true)}
+              className="flex items-center gap-1.5 px-4 py-2 bg-brand-600 text-white rounded-xl text-sm font-semibold hover:bg-brand-700 transition-colors">
+              <Plus size={14}/> Add Result
+            </button>
           </div>
         </div>
+
+        {/* Add Polling Station Result Form */}
+        {showForm && (
+          <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <h2 className="font-black text-slate-800">Add Polling Station Result</h2>
+                <button onClick={() => { setShowForm(false); setForm(EMPTY_FORM); }} className="text-slate-400 hover:text-slate-700"><X size={20}/></button>
+              </div>
+              <form onSubmit={handleAddResult} className="px-6 py-5 space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Candidate</label>
+                  <select value={form.candidate_id} onChange={e => {
+                    const c = candidates.find((c: any) => c.id === e.target.value);
+                    setForm(p => ({ ...p, candidate_id: e.target.value, candidate_name: c?.name || p.candidate_name, party_id: c?.partyId || '', constituency_id: c?.constituencyId || '' }));
+                  }} className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-400">
+                    <option value="">— Select Candidate —</option>
+                    {candidates.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1.5">Candidate Name *</label>
+                  <input type="text" required value={form.candidate_name} onChange={e => setForm(p => ({ ...p, candidate_name: e.target.value }))}
+                    placeholder="Full candidate name" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-400"/>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5">Station Name *</label>
+                    <input type="text" required value={form.polling_station_name} onChange={e => setForm(p => ({ ...p, polling_station_name: e.target.value }))}
+                      placeholder="e.g. Govt Boys School" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-400"/>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5">Station Number</label>
+                    <input type="text" value={form.polling_station_number} onChange={e => setForm(p => ({ ...p, polling_station_number: e.target.value }))}
+                      placeholder="e.g. PS-001" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-400"/>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5">Date *</label>
+                    <input type="date" required value={form.date} onChange={e => setForm(p => ({ ...p, date: e.target.value }))}
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-400"/>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5">Time *</label>
+                    <input type="time" required value={form.time} onChange={e => setForm(p => ({ ...p, time: e.target.value }))}
+                      className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-400"/>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 mb-1.5">Votes *</label>
+                    <input type="number" required min="0" value={form.votes} onChange={e => setForm(p => ({ ...p, votes: e.target.value }))}
+                      placeholder="0" className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-400"/>
+                  </div>
+                </div>
+                <div className="flex gap-3 justify-end pt-2 border-t border-slate-100">
+                  <button type="button" onClick={() => { setShowForm(false); setForm(EMPTY_FORM); }} className="btn-ghost text-sm">Cancel</button>
+                  <button type="submit" disabled={saving} className="btn-primary text-sm flex items-center gap-2 disabled:opacity-50">
+                    {saving ? 'Saving…' : <><Check size={14}/> Save Result</>}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         <div className="card overflow-hidden">
           <div className="overflow-x-auto">

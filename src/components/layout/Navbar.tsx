@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { label: 'Dashboard',    href: '/' },
   { label: 'Candidates',   href: '/candidates' },
   { label: 'Live Results', href: '/results' },
+  { label: 'News',         href: '/news' },
   { label: 'About Us',     href: '/about' },
 ];
 

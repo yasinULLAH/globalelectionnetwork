@@ -6,10 +6,10 @@ import Footer from '@/components/layout/Footer';
 import { Shield, Target, Eye, Users, HeartHandshake, Building2, Award, CheckCircle } from 'lucide-react';
 
 const LEADERSHIP = [
-  { name: 'Abdul Wakeel', role: 'Director', initials: 'AW' },
-  { name: 'Naveed Ahmed', role: 'Director', initials: 'NA' },
-  { name: 'Aliya Qaiser', role: 'Director', initials: 'AQ' },
-  { name: 'Dr Mukhtar Ahmed', role: 'Director', initials: 'MA' },
+  { name: 'Abdul Wakeel',    role: 'Executive Director',          initials: 'AW', color: ['#22c55e', '#16a34a'], desc: 'Leads overall strategic direction and operations of the network.' },
+  { name: 'Naveed Ahmed',    role: 'Director of Field Operations', initials: 'NA', color: ['#3b82f6', '#2563eb'], desc: 'Oversees observer deployment and field monitoring activities.' },
+  { name: 'Aliya Qaiser',    role: 'Director of Communications',  initials: 'AQ', color: ['#a855f7', '#7c3aed'], desc: 'Manages public outreach, media relations, and stakeholder engagement.' },
+  { name: 'Dr Mukhtar Ahmed', role: 'Director of Research',       initials: 'MA', color: ['#f59e0b', '#d97706'], desc: 'Leads data analysis, research programs, and election integrity studies.' },
 ];
 
 const FOCUS_AREAS = [
@@ -136,13 +136,23 @@ export default function AboutPage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {LEADERSHIP.map((leader, i) => (
               <div key={i} className="group">
-                <div className="card p-6 text-center hover:shadow-xl transition-all">
-                  <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-white font-black text-2xl shadow-lg"
-                    style={{ background: `linear-gradient(135deg, ${i % 2 === 0 ? '#22c55e' : '#3b82f6'}, ${i % 2 === 0 ? '#16a34a' : '#2563eb'})` }}>
-                    {leader.initials}
+                <div className="bg-white rounded-2xl p-6 text-center hover:shadow-xl transition-all hover:-translate-y-1 border border-slate-100">
+                  <div className="relative mx-auto mb-5 w-fit">
+                    <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-lg"
+                      style={{ background: `linear-gradient(135deg, ${leader.color[0]}, ${leader.color[1]})` }}>
+                      {leader.initials}
+                    </div>
+                    <div className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center"
+                      style={{ background: leader.color[0] }}>
+                      <span className="text-white text-[8px] font-black">GEN</span>
+                    </div>
                   </div>
-                  <h3 className="font-bold text-slate-900 text-lg">{leader.name}</h3>
-                  <p className="text-sm font-semibold text-brand-600 mt-1">{leader.role}</p>
+                  <h3 className="font-bold text-slate-900 text-base leading-tight">{leader.name}</h3>
+                  <p className="text-xs font-semibold mt-1.5 mb-3 px-2 py-1 rounded-full inline-block"
+                    style={{ background: leader.color[0] + '18', color: leader.color[1] }}>
+                    {leader.role}
+                  </p>
+                  <p className="text-xs text-slate-500 leading-relaxed">{leader.desc}</p>
                 </div>
               </div>
             ))}

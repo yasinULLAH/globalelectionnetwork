@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
       SELECT r.*, c.name AS constituency_name, c.code AS constituency_code,
              p.color AS party_color, p.short_name AS party_short
       FROM result_entries r
-      JOIN constituencies c ON c.id = r.constituency_id
-      JOIN parties p ON p.id = r.party_id
+      LEFT JOIN constituencies c ON c.id = r.constituency_id
+      LEFT JOIN parties p ON p.id = r.party_id
       WHERE 1=1
     `;
     const params: unknown[] = [];
@@ -38,16 +38,18 @@ export async function POST(req: NextRequest) {
     const [row] = await query(`
       INSERT INTO result_entries
         (candidate_id, candidate_name, party_id, polling_station_id, polling_station_name,
-         constituency_id, election_id, votes, submitted_by, observer_id)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *
-    `, [b.candidateId, b.candidateName, b.partyId, b.pollingStationId,
-        b.pollingStationName, b.constituencyId, b.electionId,
-        b.votes, b.submittedBy, b.observerId ?? null]);
+         constituency_id, election_id, votes, submitted_by, submitted_at, observer_id)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *
+    `, [b.candidateId ?? null, b.candidateName, b.partyId ?? null, b.pollingStationId ?? null,
+        b.pollingStationName ?? '', b.constituencyId ?? null, b.electionId,
+        b.votes, b.submittedBy ?? 'admin', b.submittedAt ?? new Date().toISOString(), b.observerId ?? null]);
 
-    await query(
-      'UPDATE candidates SET votes = votes + $1 WHERE id = $2',
-      [b.votes, b.candidateId]
-    );
+    if (b.candidateId) {
+      await query(
+        'UPDATE candidates SET votes = votes + $1 WHERE id = $2',
+        [b.votes, b.candidateId]
+      );
+    }
 
     return NextResponse.json({ result: row }, { status: 201 });
   } catch (e: unknown) {
