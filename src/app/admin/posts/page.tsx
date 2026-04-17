@@ -2,7 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Eye, Image, Video } from 'lucide-react';
-import toast from 'react-hot-toast';
+const toast = {
+  success: (msg: string) => alert(msg),
+  error: (msg: string) => alert('Error: ' + msg),
+};
 
 interface Post {
   id: string;
