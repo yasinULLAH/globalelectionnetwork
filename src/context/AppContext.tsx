@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { ELECTIONS } from '@/lib/mockData';
-import type { Candidate, LiveUpdate, User, ElectionConfig, ElectionType } from '@/types';
+import type { Candidate, LiveUpdate, User, ElectionConfig, ElectionType, ElectionStatus } from '@/types';
 
 interface AppState {
   candidates: Candidate[];
@@ -32,7 +32,7 @@ function dbRowToConfig(e: Record<string, unknown>): ElectionConfig {
     region: e.region as string,
     province: e.province as string,
     date: e.date as string,
-    status: e.status as string,
+    status: (e.status ?? 'upcoming') as ElectionStatus,
     totalSeats: (e.total_seats ?? e.totalSeats ?? 0) as number,
     totalRegisteredVoters: (e.total_registered_voters ?? e.totalRegisteredVoters ?? 0) as number,
     description: e.description as string,
@@ -97,7 +97,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           const saved = savedId ? configs.find((c: ElectionConfig) => c.id === savedId) : null;
 
           // Fall back to active election
-          const active = saved ?? configs.find((c: ElectionConfig) => c.status === 'live') ?? configs.find((c: ElectionConfig) => c.status === 'active') ?? configs[0];
+          const active = saved ?? configs.find((c: ElectionConfig) => c.status === 'live') ?? configs.find((c: ElectionConfig) => c.status === 'upcoming') ?? configs[0];
           setActiveElectionState(active);
           setIsLive(active.status === 'live');
           fetchCandidatesForElection(active.id, active.status);
