@@ -77,6 +77,7 @@ export default function HomePage() {
   const [constituencies, setConstituencies] = React.useState<any[]>([]);
   const [observers, setObservers] = React.useState<any[]>([]);
   const [regionalSummaries, setRegionalSummaries] = React.useState<any[]>([]);
+  const [news, setNews] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     if (activeElection.id) {
@@ -98,6 +99,11 @@ export default function HomePage() {
         .then(data => setObservers(data.observers || []))
         .catch(() => {});
     }
+    // Fetch latest news (not election-specific)
+    fetch('/api/posts?status=published&limit=3')
+      .then(r => r.json())
+      .then(data => setNews(data.posts || []))
+      .catch(() => {});
   }, [activeElection.id]);
 
   const topCandidates    = [...candidates].sort((a, b) => b.votes - a.votes).slice(0, 6);
@@ -331,6 +337,50 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Latest News ── */}
+      {news.length > 0 && (
+        <section className="py-12 bg-slate-50 border-t border-slate-100">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="flex items-end justify-between mb-7">
+              <div>
+                <span className="text-xs font-black uppercase tracking-widest text-green-600 bg-green-50 px-3 py-1 rounded-full">Latest</span>
+                <h2 className="text-2xl font-black text-slate-900 mt-2">News & Updates</h2>
+              </div>
+              <Link href="/news" className="text-sm font-semibold text-green-700 hover:text-green-800 transition-colors hidden sm:block">View all →</Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {news.map((post: any) => (
+                <Link key={post.id} href={`/news/${post.slug}`}
+                  className="card card-hover overflow-hidden group flex flex-col">
+                  {post.featured_image_url && (
+                    <div className="h-40 overflow-hidden bg-slate-100">
+                      <img src={post.featured_image_url} alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+                    </div>
+                  )}
+                  <div className="p-4 flex-1 flex flex-col">
+                    {post.category && (
+                      <span className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-1.5">{post.category}</span>
+                    )}
+                    <h3 className="font-black text-slate-900 text-sm leading-snug mb-2 group-hover:text-green-700 transition-colors line-clamp-2">{post.title}</h3>
+                    {post.excerpt && (
+                      <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 flex-1">{post.excerpt}</p>
+                    )}
+                    <p className="text-[10px] text-slate-400 mt-3">
+                      {post.author && <span className="font-semibold">{post.author} · </span>}
+                      {new Date(post.created_at).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center mt-6 sm:hidden">
+              <Link href="/news" className="text-sm font-semibold text-green-700">View all news →</Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Organogram / Leadership Team ── */}
       <section className="py-14 bg-white border-t border-slate-100">
         <div className="max-w-6xl mx-auto px-4">
@@ -340,31 +390,33 @@ export default function HomePage() {
             <p className="text-slate-500 text-sm max-w-xl mx-auto">The dedicated team behind transparent and credible election monitoring across Pakistan.</p>
           </div>
 
-          {/* Top — Executive Director */}
-          <div className="flex justify-center mb-6">
-            <div className="relative bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl p-5 w-60 text-center shadow-lg shadow-green-200">
-              <div className="w-14 h-14 rounded-full bg-white/20 border-2 border-white/30 flex items-center justify-center text-white font-black text-xl mx-auto mb-3">AW</div>
-              <p className="text-white font-black text-sm">Abdul Wakeel</p>
-              <p className="text-green-200 text-[11px] font-semibold mt-0.5">Director Digital Transformation</p>
+          {/* Top — Naveed Ahmed */}
+          <div className="flex justify-center mb-2">
+            <div className="relative bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-5 w-64 text-center shadow-lg shadow-blue-200">
+              <div className="w-16 h-16 rounded-full bg-white/20 border-2 border-white/30 flex items-center justify-center text-white font-black text-xl mx-auto mb-3">NA</div>
+              <p className="text-white font-black">Naveed Ahmed</p>
+              <p className="text-blue-200 text-xs font-semibold mt-0.5">Executive Director</p>
+              <p className="text-blue-300/70 text-[10px] mt-0.5">Field Operations & Strategy</p>
               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-0.5 h-4 bg-slate-200"/>
             </div>
           </div>
 
-          {/* Connector line row */}
-          <div className="flex justify-center mb-2">
-            <div className="w-3/4 h-0.5 bg-slate-200 relative">
-              <div className="absolute left-1/6 top-0 w-0.5 h-4 bg-slate-200"/>
-              <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-slate-200 -translate-x-1/2"/>
-              <div className="absolute right-1/6 top-0 w-0.5 h-4 bg-slate-200"/>
+          {/* Connector */}
+          <div className="flex justify-center mb-1">
+            <div className="relative" style={{width:'640px', maxWidth:'100%'}}>
+              <div className="h-0.5 bg-slate-200 w-2/3 mx-auto"/>
+              <div className="absolute left-1/6 -top-0 w-0.5 h-5 bg-slate-200"/>
+              <div className="absolute left-1/2 -top-0 w-0.5 h-5 bg-slate-200 -translate-x-1/2"/>
+              <div className="absolute right-1/6 -top-0 w-0.5 h-5 bg-slate-200"/>
             </div>
           </div>
 
           {/* Directors row */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mt-3">
             {[
-              { initials: 'NA', name: 'Naveed Ahmed',     role: 'Director of Field Operations', color: 'from-blue-500 to-blue-700',   bg: 'bg-blue-50',  border: 'border-blue-200',  text: 'text-blue-700' },
-              { initials: 'AQ', name: 'Aliya Qaiser',     role: 'Director of Communications',   color: 'from-purple-500 to-purple-700', bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700' },
-              { initials: 'NB', name: 'Naeem Ahmed Bajwa', role: 'Director of Research',         color: 'from-amber-500 to-amber-700',  bg: 'bg-amber-50',  border: 'border-amber-200',  text: 'text-amber-700' },
+              { initials: 'AW', name: 'Abdul Wakeel',     role: 'Director Digital Transformation', color: 'from-green-500 to-emerald-700',  bg: 'bg-green-50',  border: 'border-green-200',  text: 'text-green-700' },
+              { initials: 'AQ', name: 'Aliya Qaiser',     role: 'Director of Communications',      color: 'from-purple-500 to-purple-700',  bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700' },
+              { initials: 'NB', name: 'Naeem Ahmed Bajwa', role: 'Director of Research',            color: 'from-amber-500 to-amber-700',    bg: 'bg-amber-50',  border: 'border-amber-200',  text: 'text-amber-700' },
             ].map(m => (
               <div key={m.name} className={`${m.bg} border ${m.border} rounded-2xl p-4 text-center hover:shadow-md transition-shadow`}>
                 <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${m.color} flex items-center justify-center text-white font-black text-sm mx-auto mb-2.5 shadow-sm`}>
@@ -377,9 +429,9 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-8">
-            <a href="/about" className="inline-flex items-center gap-2 text-sm font-semibold text-green-700 hover:text-green-800 transition-colors">
+            <Link href="/about" className="inline-flex items-center gap-2 text-sm font-semibold text-green-700 hover:text-green-800 transition-colors">
               Learn more about our team →
-            </a>
+            </Link>
           </div>
         </div>
       </section>
