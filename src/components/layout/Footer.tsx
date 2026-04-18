@@ -113,6 +113,8 @@ export default function Footer() {
             <Link href="/observer" className="hover:text-white/60 transition-colors">Observers</Link>
             <span>·</span>
             <Link href="/login" className="hover:text-white/60 transition-colors">Admin Login</Link>
+            <span>·</span>
+            <a href="/Funding_Proposal_2026.html" target="_blank" rel="noopener noreferrer" className="hover:text-white/60 transition-colors">Funding Proposal</a>
           </div>
         </div>
       </div>

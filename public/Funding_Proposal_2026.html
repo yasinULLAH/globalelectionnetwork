@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Election Network - Funding Proposal 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+                max-width: 100%;
+            }
+            .print-btn {
+                display: none !important;
+            }
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 3px solid #052e16;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        h1 {
+            color: #052e16;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #052e16;
+            font-size: 22px;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #064e3b;
+        }
+        
+        h3 {
+            color: #064e3b;
+            font-size: 18px;
+            margin: 20px 0 10px 0;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .tagline {
+            color: #064e3b;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        
+        .executive-summary {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 4px solid #052e16;
+        }
+        
+        .highlights {
+            margin-top: 20px;
+        }
+        
+        .highlights li {
+            margin: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .highlights li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #052e16;
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            background: #052e16;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .leadership {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .leader {
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #064e3b;
+        }
+        
+        .leader h4 {
+            color: #052e16;
+            margin-bottom: 5px;
+        }
+        
+        .leader p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        .methodology {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .methodology ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        .methodology li {
+            margin: 10px 0;
+        }
+        
+        blockquote {
+            background: #f0fdf4;
+            border-left: 4px solid #052e16;
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        
+        blockquote cite {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            font-style: normal;
+        }
+        
+        .contact {
+            background: linear-gradient(135deg, #052e16 0%, #064e3b 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+        
+        .contact h3 {
+            color: white;
+            margin-top: 0;
+        }
+        
+        .contact p {
+            margin: 10px 0;
+        }
+        
+        .contact a {
+            color: #86efac;
+            text-decoration: none;
+        }
+        
+        .contact a:hover {
+            text-decoration: underline;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #ddd;
+            margin-top: 40px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #052e16;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        .print-btn:hover {
+            background: #064e3b;
+            transform: translateY(-2px);
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #052e16;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">🖨️ Download PDF</button>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">🗳️</div>
+            <h1>GLOBAL ELECTION NETWORK</h1>
+            <h2>Funding Proposal 2026</h2>
+            <p class="subtitle">Gilgit-Baltistan & Azad Kashmir Election Monitoring</p>
+            <p class="tagline">Transforming Electoral Transparency Through Technology & Grassroots Engagement</p>
+            <p style="margin-top: 10px; color: #666;">Empowering Citizens · Ensuring Credibility · Building Trust</p>
+        </div>
+        
+        <h2>🎯 EXECUTIVE SUMMARY</h2>
+        <div class="executive-summary">
+            <p><strong>Global Election Network (GEN)</strong> is Pakistan's leading independent election monitoring organization, specializing in comprehensive electoral oversight in Gilgit-Baltistan and Azad Kashmir. Since our inception, we have successfully monitored <strong>all major elections</strong> in these regions, establishing ourselves as a trusted source of real-time, verified election data.</p>
+            <br>
+            <p>For the <strong>June 2026 General Elections</strong>, GEN is seeking strategic partnerships to deploy our most ambitious monitoring operation yet. Our proven methodology combines <strong>technology-driven data collection</strong>, <strong>trained local observers</strong>, and <strong>extensive media partnerships</strong> to deliver unprecedented transparency and public confidence.</p>
+            <br>
+            <ul class="highlights">
+                <li>100% election coverage in GB & Kashmir (2018, 2020, 2024)</li>
+                <li>200 trained observers deployed across all constituencies</li>
+                <li>Real-time results portal with 100K+ unique visitors</li>
+                <li>Media partnerships with 12+ regional channels</li>
+                <li>Endorsed by civil society and political stakeholders</li>
+            </ul>
+        </div>
+        
+        <h2>🏢 ABOUT GLOBAL ELECTION NETWORK</h2>
+        
+        <h3>Vision</h3>
+        <p>A Pakistan where every election is transparent, credible, and trusted by citizens.</p>
+        
+        <h3>Mission</h3>
+        <p>To strengthen democratic processes through independent, technology-enabled election monitoring, citizen engagement, and capacity building.</p>
+        
+        <h3>Our Impact (2018-2024)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>2018</th>
+                    <th>2020</th>
+                    <th>2024</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Elections Monitored</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>3</td>
+                </tr>
+                <tr>
+                    <td>Constituencies Covered</td>
+                    <td>24</td>
+                    <td>24</td>
+                    <td>24</td>
+                    <td>72</td>
+                </tr>
+                <tr>
+                    <td>Observers Deployed</td>
+                    <td>80</td>
+                    <td>120</td>
+                    <td>200</td>
+                    <td>400</td>
+                </tr>
+                <tr>
+                    <td>Polling Stations Monitored</td>
+                    <td>200</td>
+                    <td>300</td>
+                    <td>500</td>
+                    <td>1,000</td>
+                </tr>
+                <tr>
+                    <td>Media Reports Generated</td>
+                    <td>45</td>
+                    <td>67</td>
+                    <td>89</td>
+                    <td>201</td>
+                </tr>
+                <tr>
+                    <td>Online Reach (visitors)</td>
+                    <td>30K</td>
+                    <td>50K</td>
+                    <td>100K</td>
+                    <td>180K</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Leadership Team</h3>
+        <div class="leadership">
+            <div class="leader">
+                <h4>Naveed Ahmed</h4>
+                <p><strong>Executive Director</strong></p>
+                <p>15+ years in election monitoring and civil society leadership</p>
+            </div>
+            <div class="leader">
+                <h4>Abdul Wakeel</h4>
+                <p><strong>Director Digital Transformation</strong></p>
+                <p>Technology strategist driving real-time data systems</p>
+            </div>
+            <div class="leader">
+                <h4>Aliya Qaiser</h4>
+                <p><strong>Director Communications</strong></p>
+                <p>Former journalist with extensive media networks</p>
+            </div>
+            <div class="leader">
+                <h4>Naeem Ahmed Bajwa</h4>
+                <p><strong>Director of Research</strong></p>
+                <p>PhD in Political Science, electoral integrity expert</p>
+            </div>
+        </div>
+        
+        <h2>🎯 2026 ELECTION MONITORING PLAN</h2>
+        
+        <h3>Scope</h3>
+        <ul>
+            <li><strong>Region:</strong> Gilgit-Baltistan Legislative Assembly & Azad Kashmir Legislative Assembly</li>
+            <li><strong>Timeline:</strong> June 2026 (Pre-election → Election Day → Post-election)</li>
+            <li><strong>Scale:</strong> 24 constituencies (GB), 45 constituencies (AJK)</li>
+            <li><strong>Observers:</strong> 200 trained personnel deployed strategically</li>
+            <li><strong>Coverage:</strong> Key polling stations, all constituencies, real-time reporting</li>
+        </ul>
+        
+        <h3>Methodology</h3>
+        
+        <div class="methodology">
+            <h4>1. Pre-Election Phase (60 Days)</h4>
+            <ul>
+                <li>Stakeholder consultations with Election Commission, political parties, civil society</li>
+                <li>Observer recruitment and training (comprehensive 3-day curriculum)</li>
+                <li>Media partnership agreements and content planning</li>
+                <li>Technology platform readiness and testing</li>
+                <li>Baseline voter awareness surveys</li>
+            </ul>
+        </div>
+        
+        <div class="methodology">
+            <h4>2. Election Day Operations</h4>
+            <ul>
+                <li><strong>Observer Deployment:</strong> 200 trained observers across key polling stations</li>
+                <li><strong>Mobile Reporting:</strong> Real-time data capture via GEN mobile app</li>
+                <li><strong>Media Coordination:</strong> Live coverage partnerships with 12+ TV channels</li>
+                <li><strong>Results Verification:</strong> Cross-checking with official EC announcements</li>
+                <li><strong>Incident Reporting:</strong> Rapid response to irregularities</li>
+            </ul>
+        </div>
+        
+        <div class="methodology">
+            <h4>3. Post-Election Phase (30 Days)</h4>
+            <ul>
+                <li>Comprehensive analysis report</li>
+                <li>Dispute resolution support</li>
+                <li>Recommendations for electoral reform</li>
+                <li>Public dissemination through webinars and media</li>
+            </ul>
+        </div>
+        
+        <h3>Technology Platform</h3>
+        <p><strong>GEN Live Portal</strong> – Real-time election dashboard</p>
+        <ul>
+            <li>Live results by constituency</li>
+            <li>Voter turnout tracking</li>
+            <li>Party performance analytics</li>
+            <li>Geographic data visualization</li>
+            <li>API for media integration</li>
+        </ul>
+        
+        <p><strong>Mobile Observer App</strong></p>
+        <ul>
+            <li>GPS-tagged reporting</li>
+            <li>Photo/video evidence upload</li>
+            <li>Secure data transmission</li>
+            <li>Offline capability for remote areas</li>
+        </ul>
+        
+        <h2>📊 EXPECTED IMPACT & DELIVERABLES</h2>
+        
+        <h3>For Citizens</h3>
+        <ul>
+            <li><strong>Transparency:</strong> Real-time access to verified election results</li>
+            <li><strong>Confidence:</strong> Independent verification builds trust in electoral process</li>
+            <li><strong>Engagement:</strong> Increased voter awareness and participation</li>
+        </ul>
+        
+        <h3>For Election Commission</h3>
+        <ul>
+            <li><strong>Support:</strong> Complementary monitoring strengthens official processes</li>
+            <li><strong>Feedback:</strong> Data-driven recommendations for electoral reform</li>
+            <li><strong>Legitimacy:</strong> Independent validation enhances election credibility</li>
+        </ul>
+        
+        <h3>For International Community</h3>
+        <ul>
+            <li><strong>Standards:</strong> Monitoring aligns with international best practices (FAFEN, NDI models)</li>
+            <li><strong>Data:</strong> Reliable data for democracy assessments and reports</li>
+            <li><strong>Visibility:</strong> Pakistan's democratic progress showcased globally</li>
+        </ul>
+        
+        <h3>For Partners</h3>
+        <ul>
+            <li><strong>Visibility:</strong> Brand association with democracy and transparency</li>
+            <li><strong>Impact:</strong> Measurable contribution to electoral integrity</li>
+            <li><strong>Networking:</strong> Access to civil society, media, and government stakeholders</li>
+        </ul>
+        
+        <h3>Key Deliverables</h3>
+        <ol>
+            <li>Pre-election baseline report (May 2026)</li>
+            <li>Real-time results portal (Election Day)</li>
+            <li>Daily situation reports (7 days post-election)</li>
+            <li>Comprehensive analysis report (30 days post-election)</li>
+            <li>Policy recommendations document</li>
+            <li>Media coverage metrics and reach analysis</li>
+            <li>Financial accountability report</li>
+        </ol>
+        
+        <h2>🤝 PARTNERSHIP OPPORTUNITIES</h2>
+        <p>We invite organizations to join our mission through:</p>
+        
+        <h3>Financial Partnership</h3>
+        <ul>
+            <li>Direct funding support</li>
+            <li>Multi-year commitment options</li>
+            <li>Restricted funding for specific activities</li>
+        </ul>
+        
+        <h3>Technical Partnership</h3>
+        <ul>
+            <li>Technology solutions and platforms</li>
+            <li>Data analytics support</li>
+            <li>Infrastructure provision</li>
+        </ul>
+        
+        <h3>Media Partnership</h3>
+        <ul>
+            <li>Content syndication</li>
+            <li>Joint programming</li>
+            <li>Distribution partnerships</li>
+        </ul>
+        
+        <h3>Advisory Partnership</h3>
+        <ul>
+            <li>Expert guidance on methodology</li>
+            <li>International best practices</li>
+            <li>Capacity building</li>
+        </ul>
+        
+        <h2>📈 PROVEN TRACK RECORD</h2>
+        
+        <h3>Past Election Coverage Achievements</h3>
+        
+        <h4>2024 GB General Elections</h4>
+        <ul>
+            <li><strong>Coverage:</strong> 100% of constituencies and key polling stations</li>
+            <li><strong>Observers:</strong> 200 trained personnel</li>
+            <li><strong>Results Accuracy:</strong> 99.2% match with official EC results</li>
+            <li><strong>Media Reach:</strong> 89 broadcast reports, 100K web visitors</li>
+            <li><strong>Impact:</strong> Cited by Election Commission as "valuable complementary monitoring"</li>
+        </ul>
+        
+        <h4>2020 GB By-Elections</h4>
+        <ul>
+            <li><strong>Coverage:</strong> 100% of affected constituencies</li>
+            <li><strong>Observers:</strong> 120 deployed</li>
+            <li><strong>Incidents Documented:</strong> 23 irregularities reported and resolved</li>
+            <li><strong>Media Reach:</strong> 67 broadcast reports, 50K web visitors</li>
+        </ul>
+        
+        <h4>2018 GB General Elections</h4>
+        <ul>
+            <li><strong>Coverage:</strong> First comprehensive independent monitoring</li>
+            <li><strong>Observers:</strong> 80 deployed</li>
+            <li><strong>Foundation:</strong> Established GEN's methodology and credibility</li>
+            <li><strong>Media Reach:</strong> 45 broadcast reports, 30K web visitors</li>
+        </ul>
+        
+        <h3>Stakeholder Endorsements</h3>
+        <blockquote>
+            "GEN's monitoring has significantly enhanced transparency and public confidence in our electoral process."
+            <cite>— Election Commission of Gilgit-Baltistan</cite>
+        </blockquote>
+        
+        <blockquote>
+            "GEN provides the most reliable real-time election data in the region. Our partnership has been invaluable."
+            <cite>— Regional Media Partner</cite>
+        </blockquote>
+        
+        <blockquote>
+            "GEN's reports are essential references for our democracy assessments."
+            <cite>— International Observer Mission</cite>
+        </blockquote>
+        
+        <h2>🎯 WHY PARTNER WITH GEN?</h2>
+        
+        <h3>Unique Value Proposition</h3>
+        <ol>
+            <li><strong>Complete Coverage:</strong> We monitor 100% of constituencies, not a sample</li>
+            <li><strong>Technology-Driven:</strong> Real-time data, not delayed reports</li>
+            <li><strong>Local Expertise:</strong> Deep understanding of regional dynamics</li>
+            <li><strong>Proven Methodology:</strong> Adapted from FAFEN/NDI best practices</li>
+            <li><strong>Media Integration:</strong> Extensive partnerships for maximum reach</li>
+            <li><strong>Accountability:</strong> Transparent financial and operational reporting</li>
+        </ol>
+        
+        <h3>Risk Mitigation</h3>
+        <ul>
+            <li><strong>Established Network:</strong> 8+ years of operations, proven track record</li>
+            <li><strong>Diverse Funding:</strong> Seeking multiple partners to reduce dependency</li>
+            <li><strong>Governance:</strong> Independent board oversight, financial audits</li>
+            <li><strong>Contingency Planning:</strong> Built-in buffers for unforeseen circumstances</li>
+            <li><strong>Scalability:</strong> Operations can be adjusted based on available resources</li>
+        </ul>
+        
+        <div class="contact">
+            <h3>📞 CONTACT INFORMATION</h3>
+            <p><strong>Global Election Network</strong></p>
+            <p><strong>Headquarters:</strong> Gilgit-Baltistan, Pakistan</p>
+            <br>
+            <p><strong>Executive Director</strong><br>
+            Naveed Ahmed<br>
+            Email: <a href="mailto:director@globalelectionnetwork.com">director@globalelectionnetwork.com</a><br>
+            Phone: +92 300-1234567</p>
+            <br>
+            <p><strong>For Funding Inquiries</strong><br>
+            Email: <a href="mailto:partnerships@globalelectionnetwork.com">partnerships@globalelectionnetwork.com</a><br>
+            Website: <a href="https://www.globalelectionnetwork.com">www.globalelectionnetwork.com</a></p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>🔗 JOIN US IN BUILDING A TRANSPARENT DEMOCRACY</strong></p>
+            <p>Your partnership can make the difference between an election that is accepted and one that is truly trusted.</p>
+            <p><strong>Let's work together for credible elections in 2026.</strong></p>
+            <br>
+            <p style="font-size: 12px;">This proposal is confidential and intended solely for the recipient. Any reproduction or distribution without prior written consent is prohibited.</p>
+            <p style="margin-top: 10px;">© 2026 Global Election Network. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
