@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "sudo -u postgres psql -d elections -f /var/www/globalelectionnetwork/seed-news.sh 2>&1 | tail -5 || sudo -u postgres psql -d elections -c \"SELECT COUNT(*) FROM posts\" 2>&1"
+  ]
+}

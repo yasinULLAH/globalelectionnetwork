@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "sudo -u postgres psql -d elections -c \"SELECT COUNT(*) as total_posts FROM posts; SELECT DISTINCT category FROM posts ORDER BY 1;\" 2>&1"
+  ]
+}
