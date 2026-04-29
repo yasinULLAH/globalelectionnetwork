@@ -1,0 +1,22 @@
+{
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "_b224a857eca0031c91b39e6d4ecb919e.globalelectionnetwork.com.",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [{ "Value": "_62a1490e1923be878031f18de290c0fc.jkddzztszm.acm-validations.aws." }]
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "_008e286e01db4928b8239bf05e7be80f.www.globalelectionnetwork.com.",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [{ "Value": "_f2ba6a70f698f81c1f8aae7e69724a7a.jkddzztszm.acm-validations.aws." }]
+      }
+    }
+  ]
+}

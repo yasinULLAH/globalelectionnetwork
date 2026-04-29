@@ -7,7 +7,7 @@ import { useApp } from '@/context/AppContext';
 import type { ElectionConfig } from '@/types';
 
 const NAV_LINKS = [
-  { label: 'Dashboard',    href: '/' },
+  { label: 'Dashboard',    href: '/dashboard' },
   { label: 'Candidates',   href: '/candidates' },
   { label: 'Live Results', href: '/results' },
   { label: 'News',         href: '/news' },

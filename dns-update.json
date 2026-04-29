@@ -1,0 +1,19 @@
+{
+  "Changes": [{
+    "Action": "UPSERT",
+    "ResourceRecordSet": {
+      "Name": "globalelectionnetwork.com",
+      "Type": "A",
+      "TTL": 300,
+      "ResourceRecords": [{ "Value": "13.53.243.22" }]
+    }
+  },{
+    "Action": "UPSERT",
+    "ResourceRecordSet": {
+      "Name": "www.globalelectionnetwork.com",
+      "Type": "A",
+      "TTL": 300,
+      "ResourceRecords": [{ "Value": "13.53.243.22" }]
+    }
+  }]
+}

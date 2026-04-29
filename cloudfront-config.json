@@ -1,0 +1,54 @@
+{
+  "CallerReference": "gen-election-2026-04",
+  "Aliases": {
+    "Quantity": 2,
+    "Items": ["globalelectionnetwork.com", "www.globalelectionnetwork.com"]
+  },
+  "DefaultRootObject": "",
+  "Origins": {
+    "Quantity": 1,
+    "Items": [{
+      "Id": "ec2-origin",
+      "DomainName": "origin.globalelectionnetwork.com",
+      "CustomOriginConfig": {
+        "HTTPPort": 80,
+        "HTTPSPort": 443,
+        "OriginProtocolPolicy": "http-only",
+        "OriginSslProtocols": { "Quantity": 1, "Items": ["TLSv1.2"] },
+        "IpAddressType": "ipv6"
+      }
+    }]
+  },
+  "DefaultCacheBehavior": {
+    "TargetOriginId": "ec2-origin",
+    "ViewerProtocolPolicy": "redirect-to-https",
+    "AllowedMethods": {
+      "Quantity": 7,
+      "Items": ["GET","HEAD","OPTIONS","PUT","POST","PATCH","DELETE"],
+      "CachedMethods": { "Quantity": 2, "Items": ["GET","HEAD"] }
+    },
+    "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
+    "OriginRequestPolicyId": "b689b0a8-53d0-40ab-baf2-68738e2966ac",
+    "Compress": true
+  },
+  "CacheBehaviors": {
+    "Quantity": 1,
+    "Items": [{
+      "PathPattern": "/_next/static/*",
+      "TargetOriginId": "ec2-origin",
+      "ViewerProtocolPolicy": "redirect-to-https",
+      "AllowedMethods": { "Quantity": 2, "Items": ["GET","HEAD"] },
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "Compress": true
+    }]
+  },
+  "Comment": "Global Election Network",
+  "Enabled": true,
+  "HttpVersion": "http2and3",
+  "IsIPV6Enabled": true,
+  "ViewerCertificate": {
+    "ACMCertificateArn": "arn:aws:acm:us-east-1:372048261712:certificate/7484cf87-80ce-4ede-a41c-7452483a053a",
+    "SSLSupportMethod": "sni-only",
+    "MinimumProtocolVersion": "TLSv1.2_2021"
+  }
+}
