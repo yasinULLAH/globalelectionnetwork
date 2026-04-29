@@ -1,0 +1,5 @@
+{
+  "commands": [
+    "echo alive && pm2 list 2>&1 | cat && free -m"
+  ]
+}

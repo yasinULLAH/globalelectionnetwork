@@ -6,6 +6,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status') || 'published';
     const category = searchParams.get('category');
+    const year = searchParams.get('year');
     const limit = parseInt(searchParams.get('limit') || '10');
     const offset = parseInt(searchParams.get('offset') || '0');
 
@@ -21,11 +22,17 @@ export async function GET(req: NextRequest) {
 
     if (category) {
       paramCount++;
-      sql += ` AND category = $${paramCount}`;
+      sql += ` AND LOWER(category) = LOWER($${paramCount})`;
       params.push(category);
     }
 
-    sql += ` ORDER BY created_at DESC LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}`;
+    if (year) {
+      paramCount++;
+      sql += ` AND EXTRACT(YEAR FROM COALESCE(published_at, created_at)) = $${paramCount}`;
+      params.push(parseInt(year));
+    }
+
+    sql += ` ORDER BY COALESCE(published_at, created_at) DESC LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}`;
     params.push(limit, offset);
 
     const posts = await query(sql, params);
