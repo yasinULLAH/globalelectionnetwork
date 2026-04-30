@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { LIVE_UPDATES } from '@/lib/mockData';
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,11 +11,20 @@ export async function GET(req: NextRequest) {
     let sql = 'SELECT * FROM live_updates WHERE 1=1';
     const params: unknown[] = [];
     let i = 1;
-    if (electionId) { sql += ` AND election_id=$${i++}`; params.push(electionId); }
-    sql += ` ORDER BY timestamp DESC LIMIT $${i}`;
+    if (electionId) { sql += \` AND election_id=$$\{i++}\`; params.push(electionId); }
+    sql += \` ORDER BY timestamp DESC LIMIT $$\{i}\`;
     params.push(limit);
 
-    const updates = await query(sql, params);
+    let updates = await query(sql, params);
+
+    // Mock Fallback
+    if (!updates.length) {
+      updates = LIVE_UPDATES.map(u => ({
+        ...u,
+        constituency_code: u.constituencyCode
+      })) as any;
+    }
+
     return NextResponse.json({ updates });
   } catch (e: unknown) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

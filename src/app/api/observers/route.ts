@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'crypto';
 import { query } from '@/lib/db';
 import { sendObserverCredentials } from '@/lib/email';
+import { OBSERVERS } from '@/lib/mockData';
 
 export async function GET(req: NextRequest) {
   try {
@@ -12,11 +13,23 @@ export async function GET(req: NextRequest) {
     let sql = 'SELECT * FROM observers WHERE 1=1';
     const params: unknown[] = [];
     let i = 1;
-    if (electionId) { sql += ` AND election_id=$${i++}`; params.push(electionId); }
-    if (status)     { sql += ` AND status=$${i++}`;      params.push(status); }
+    if (electionId) { sql += \` AND election_id=$$\{i++}\`; params.push(electionId); }
+    if (status)     { sql += \` AND status=$$\{i++}\`;      params.push(status); }
     sql += ' ORDER BY joined_at DESC';
 
-    const observers = await query(sql, params);
+    let observers = await query(sql, params);
+
+    // Mock Fallback
+    if (!observers.length) {
+      observers = OBSERVERS.map(o => ({
+        ...o,
+        polling_station_name: o.pollingStationName,
+        results_submitted: o.resultsSubmitted,
+        last_activity: o.lastActivity,
+        joined_at: o.joinedAt
+      })) as any;
+    }
+
     return NextResponse.json({ observers });
   } catch (e: unknown) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

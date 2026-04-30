@@ -18,8 +18,12 @@ export async function GET() {
       `, []),
     ]);
 
-    const years = yearsResult.map((r) => r.year).filter(Boolean);
-    const categories = categoriesResult.map((r) => r.category).filter(Boolean);
+    let years = yearsResult.map((r) => r.year).filter(Boolean);
+    let categories = categoriesResult.map((r) => r.category).filter(Boolean);
+
+    // Mock Fallback
+    if (!years.length) years = [new Date().getFullYear().toString()];
+    if (!categories.length) categories = ['Elections', 'Technology', 'Analysis', 'News'];
 
     return NextResponse.json({ years, categories });
   } catch (e: unknown) {

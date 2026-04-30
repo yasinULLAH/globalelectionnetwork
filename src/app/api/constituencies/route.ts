@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { CONSTITUENCIES, PROVINCES } from '@/lib/mockData';
 
 export async function GET(req: NextRequest) {
   try {
@@ -7,19 +8,35 @@ export async function GET(req: NextRequest) {
     const electionId = searchParams.get('electionId');
     const type       = searchParams.get('type');
 
-    let sql = `
+    let sql = \`
       SELECT c.*, p.name AS province_name
       FROM constituencies c
       JOIN provinces p ON p.id = c.province_id
       WHERE 1=1
-    `;
+    \`;
     const params: unknown[] = [];
     let i = 1;
-    if (electionId) { sql += ` AND c.election_id=$${i++}`; params.push(electionId); }
-    if (type)       { sql += ` AND c.type=$${i++}`;        params.push(type); }
+    if (electionId) { sql += \` AND c.election_id=$$\{i++}\`; params.push(electionId); }
+    if (type)       { sql += \` AND c.type=$$\{i++}\`;        params.push(type); }
     sql += ' ORDER BY c.code';
 
-    const constituencies = await query(sql, params);
+    let constituencies = await query(sql, params);
+
+    // Mock Fallback
+    if (!constituencies.length) {
+      constituencies = CONSTITUENCIES.map(c => {
+        const prov = PROVINCES.find(p => p.id === c.provinceId);
+        return {
+          ...c,
+          province_id: c.provinceId,
+          registered_voters: c.registeredVoters,
+          reported_stations: c.reportedStations,
+          total_stations: c.totalStations,
+          province_name: prov?.name
+        };
+      }) as any;
+    }
+
     return NextResponse.json({ constituencies });
   } catch (e: unknown) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

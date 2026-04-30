@@ -32,10 +32,34 @@ export async function GET(req: NextRequest) {
       params.push(parseInt(year));
     }
 
-    sql += ` ORDER BY COALESCE(published_at, created_at) DESC LIMIT $${paramCount + 1} OFFSET $${paramCount + 2}`;
+    sql += \` ORDER BY COALESCE(published_at, created_at) DESC LIMIT $$\{paramCount + 1} OFFSET $$\{paramCount + 2}\`;
     params.push(limit, offset);
 
-    const posts = await query(sql, params);
+    let posts = await query(sql, params);
+
+    // Mock Fallback
+    if (!posts.length) {
+      posts = [
+        {
+          id: '1', title: 'GB General Elections: High Voter Turnout Expected', slug: 'gb-general-elections-turnout',
+          excerpt: 'Observers predict a record-breaking turnout in the upcoming regional elections.',
+          content: 'Full report here...', author: 'Admin Malik', category: 'Elections',
+          status: 'published', created_at: new Date().toISOString()
+        },
+        {
+          id: '2', title: 'New Digital Monitoring System Launched', slug: 'new-digital-monitoring-system',
+          excerpt: 'GEN introduces a real-time reporting tool for field observers.',
+          content: 'The new system allows...', author: 'Tech Team', category: 'Technology',
+          status: 'published', created_at: new Date(Date.now() - 86400000).toISOString()
+        },
+        {
+          id: '3', title: 'Independent Review of Constituency Boundaries', slug: 'independent-review-boundaries',
+          excerpt: 'A comprehensive study on the impact of recent boundary changes.',
+          content: 'The study reveals...', author: 'Research Dept', category: 'Analysis',
+          status: 'published', created_at: new Date(Date.now() - 172800000).toISOString()
+        }
+      ] as any;
+    }
 
     return NextResponse.json({ posts });
   } catch (e: unknown) {

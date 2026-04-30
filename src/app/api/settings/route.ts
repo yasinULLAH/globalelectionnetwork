@@ -4,7 +4,12 @@ import { query } from '@/lib/db';
 export async function GET() {
   try {
     const rows = await query<{ key: string; value: string }>('SELECT key, value FROM site_settings ORDER BY key');
-    const settings: Record<string, string> = {};
+    const settings: Record<string, string> = {
+      siteName: 'Global Election Network',
+      siteDescription: 'Live election monitoring and reporting',
+      primaryColor: '#16a34a',
+      contactEmail: 'contact@gen.pk'
+    };
     for (const row of rows) settings[row.key] = row.value;
     return NextResponse.json({ settings });
   } catch (e: unknown) {
