@@ -11,11 +11,15 @@ interface Candidate {
   age: number; education: string; initials: string; profession: string;
   photo_url: string | null; party_name: string; party_short: string;
   party_color: string; constituency_name: string; constituency_code: string;
+  facebook_url?: string; twitter_url?: string; instagram_url?: string; youtube_url?: string;
 }
 interface Party { id: string; name: string; short_name: string; color: string; }
 interface Constituency { id: string; name: string; code: string; }
 
-const EMPTY_FORM = { name: '', partyId: '', constituencyId: '', profession: '', age: '', bio: '', education: '', photoUrl: '' };
+const EMPTY_FORM = { 
+  name: '', partyId: '', constituencyId: '', profession: '', age: '', bio: '', education: '', photoUrl: '',
+  facebookUrl: '', twitterUrl: '', instagramUrl: '', youtubeUrl: '' 
+};
 
 export default function AdminCandidatesPage() {
   const { activeElection } = useApp();
@@ -58,9 +62,13 @@ export default function AdminCandidatesPage() {
 
   const handleEdit = (c: Candidate) => {
     setEditId(c.id);
-    setForm({ name: c.name, partyId: c.party_id, constituencyId: c.constituency_id,
+    setForm({ 
+      name: c.name, partyId: c.party_id, constituencyId: c.constituency_id,
       profession: c.profession ?? '', age: String(c.age ?? ''), bio: c.bio ?? '',
-      education: c.education ?? '', photoUrl: c.photo_url ?? '' });
+      education: c.education ?? '', photoUrl: c.photo_url ?? '',
+      facebookUrl: c.facebook_url ?? '', twitter_url: c.twitter_url ?? '', 
+      instagram_url: c.instagram_url ?? '', youtube_url: c.youtube_url ?? '' 
+    });
     setShowForm(true);
   };
 

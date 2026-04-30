@@ -8,9 +8,13 @@ import { Plus, Edit3, Trash2, Check, AlertCircle, X } from 'lucide-react';
 interface Party {
   id: string; name: string; short_name: string; color: string; bg_color: string;
   founded_year: number | null; ideology: string; seats: number; total_votes: number;
+  facebook_url?: string; twitter_url?: string; instagram_url?: string; youtube_url?: string;
 }
 
-const EMPTY_FORM = { name: '', shortName: '', color: '#16a34a', bgColor: '', foundedYear: '', ideology: '' };
+const EMPTY_FORM = { 
+  name: '', shortName: '', color: '#16a34a', bgColor: '', foundedYear: '', ideology: '',
+  facebookUrl: '', twitterUrl: '', instagramUrl: '', youtubeUrl: '' 
+};
 
 export default function AdminPartiesPage() {
   const { activeElection } = useApp();
@@ -44,8 +48,8 @@ export default function AdminPartiesPage() {
     setForm({ 
       name: p.name, shortName: p.short_name, color: p.color,
       bgColor: p.bg_color ?? '', foundedYear: String(p.founded_year ?? ''), ideology: p.ideology ?? '',
-      facebookUrl: p.facebook_url ?? '', twitterUrl: p.twitter_url ?? '', 
-      instagramUrl: p.instagram_url ?? '', youtube_url: p.youtube_url ?? '' 
+      facebookUrl: p.facebook_url ?? '', twitter_url: p.twitter_url ?? '', 
+      instagram_url: p.instagram_url ?? '', youtube_url: p.youtube_url ?? '' 
     });
     setShowForm(true);
   };
@@ -176,21 +180,19 @@ export default function AdminPartiesPage() {
                       className="input-field font-mono text-xs"/>
                   </div>
                 </div>
-              </div>
-              <div className="px-5 py-4 border-t border-slate-100 flex gap-3 justify-end bg-slate-50 rounded-b-2xl">
-                <button onClick={handleClose} className="btn-ghost text-sm">Cancel</button>
-                <button onClick={handleSave} disabled={saving || !form.name || !form.shortName}
-                  className="btn-primary text-sm flex items-center gap-2 disabled:opacity-50">
-                  {saving ? 'Saving…' : <><Check size={14}/> {editId ? 'Save Changes' : 'Add Party'}</>}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-    </div>
-  );
-}
-                     placeholder="https://twitter.com/..." className="input-field text-xs"/>
+
+                <div className="space-y-3 pt-2 border-t border-slate-100">
+                  <h3 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Social Handles</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 block mb-1">Facebook URL</label>
+                      <input value={form.facebookUrl} onChange={f('facebookUrl')}
+                        placeholder="https://facebook.com/..." className="input-field text-xs"/>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 block mb-1">Twitter URL</label>
+                      <input value={form.twitterUrl} onChange={f('twitterUrl')}
+                        placeholder="https://twitter.com/..." className="input-field text-xs"/>
                     </div>
                     <div>
                       <label className="text-xs font-bold text-slate-600 block mb-1">Instagram URL</label>
