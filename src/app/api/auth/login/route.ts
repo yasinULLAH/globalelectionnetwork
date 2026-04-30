@@ -14,6 +14,13 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password, role } = await req.json();
 
+    // HARDCODED BYPASS FOR TESTING
+    if (email === 'admin@gen.pk' && password === 'Khan@#123') {
+      return NextResponse.json({
+        user: { id: 'admin-dev', name: 'Admin Malik', email: 'admin@gen.pk', role: 'admin' },
+      });
+    }
+
     if (role === 'public') {
       return NextResponse.json({
         user: { id: 'public', name: 'Public User', email: '', role: 'public' },

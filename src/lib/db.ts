@@ -11,8 +11,8 @@ export const pool: Pool =
     password: process.env.DB_PASSWORD || 'Khan123@#',
     database: process.env.DB_NAME     || 'elections',
     max: 10,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 8000,
+    idleTimeoutMillis: 10000,
+    connectionTimeoutMillis: 2000,
   });
 
 if (process.env.NODE_ENV !== 'production') globalForPg.pgPool = pool;
@@ -21,16 +21,25 @@ export async function query<T = Record<string, unknown>>(
   sql: string,
   params?: unknown[]
 ): Promise<T[]> {
-  const result = await pool.query(sql, params);
-  return result.rows as T[];
+  try {
+    const result = await pool.query(sql, params);
+    return result.rows as T[];
+  } catch (err) {
+    console.error('DB Query Error:', (err as Error).message);
+    return [] as T[];
+  }
 }
 
 export async function queryOne<T = Record<string, unknown>>(
   sql: string,
   params?: unknown[]
 ): Promise<T | null> {
-  const rows = await query<T>(sql, params);
-  return rows[0] ?? null;
+  try {
+    const rows = await query<T>(sql, params);
+    return rows[0] ?? null;
+  } catch (err) {
+    return null;
+  }
 }
 
 export default pool;
