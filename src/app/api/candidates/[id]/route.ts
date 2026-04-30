@@ -4,7 +4,10 @@ import { query, queryOne } from '@/lib/db';
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   try {
     const candidate = await queryOne(`
-      SELECT c.*, p.name AS party_name, p.short_name AS party_short, p.color AS party_color,
+      SELECT c.*, c.photo_url AS "photoUrl",
+             c.facebook_url AS "facebookUrl", c.twitter_url AS "twitterUrl",
+             c.instagram_url AS "instagramUrl", c.youtube_url AS "youtubeUrl",
+             p.name AS party_name, p.short_name AS party_short, p.color AS party_color,
              con.name AS constituency_name, con.code AS constituency_code
       FROM candidates c
       JOIN parties p ON p.id = c.party_id
@@ -24,10 +27,12 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     const [row] = await query(`
       UPDATE candidates SET
         name=$1, party_id=$2, constituency_id=$3, votes=$4, likes=$5,
-        bio=$6, age=$7, education=$8, initials=$9, profession=$10, photo_url=$11
-      WHERE id=$12 RETURNING *
+        bio=$6, age=$7, education=$8, initials=$9, profession=$10, photo_url=$11,
+        facebook_url=$12, twitter_url=$13, instagram_url=$14, youtube_url=$15
+      WHERE id=$16 RETURNING *
     `, [b.name, b.partyId, b.constituencyId, b.votes, b.likes,
-        b.bio, b.age, b.education, b.initials, b.profession, b.photoUrl, params.id]);
+        b.bio, b.age, b.education, b.initials, b.profession, b.photoUrl,
+        b.facebookUrl, b.twitterUrl, b.instagramUrl, b.youtubeUrl, params.id]);
     return NextResponse.json({ candidate: row });
   } catch (e: unknown) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

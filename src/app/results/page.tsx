@@ -89,7 +89,31 @@ export default function ResultsPage() {
                               <div className="w-3 h-3 rounded-full shrink-0" style={{ background: p.color }} />
                               <div>
                                 <div className="font-bold text-slate-900">{p.shortName}</div>
-                                <div className="text-slate-400 text-xs">{p.name}</div>
+                                <div className="text-slate-400 text-xs flex items-center gap-2">
+                                  {p.name}
+                                  <div className="flex items-center gap-1.5 ml-1">
+                                    {p.facebookUrl && (
+                                      <a href={p.facebookUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-blue-600">
+                                        <Facebook size={10} />
+                                      </a>
+                                    )}
+                                    {p.twitterUrl && (
+                                      <a href={p.twitterUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-sky-400">
+                                        <Twitter size={10} />
+                                      </a>
+                                    )}
+                                    {p.instagramUrl && (
+                                      <a href={p.instagramUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-pink-600">
+                                        <Instagram size={10} />
+                                      </a>
+                                    )}
+                                    {p.youtubeUrl && (
+                                      <a href={p.youtubeUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-red-600">
+                                        <Youtube size={10} />
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </td>

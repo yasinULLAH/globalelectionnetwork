@@ -57,7 +57,31 @@ function TopCandidateCard({ candidate, rank, totalVotes }: { candidate: Candidat
           <p className="font-extrabold text-slate-900 text-sm leading-tight truncate">{candidate.name}</p>
           {rank === 1 && <span className="badge badge-gold shrink-0">Leading</span>}
         </div>
-        <p className="text-xs font-bold mt-0.5" style={{ color: party?.color }}>{party?.shortName}</p>
+        <div className="flex items-center justify-between mt-0.5">
+          <p className="text-xs font-bold" style={{ color: party?.color }}>{party?.shortName}</p>
+          <div className="flex items-center gap-2">
+            {candidate.facebookUrl && (
+              <a href={candidate.facebookUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-blue-600 transition-colors">
+                <Facebook size={12} />
+              </a>
+            )}
+            {candidate.twitterUrl && (
+              <a href={candidate.twitterUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-sky-400 transition-colors">
+                <Twitter size={12} />
+              </a>
+            )}
+            {candidate.instagramUrl && (
+              <a href={candidate.instagramUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-pink-600 transition-colors">
+                <Instagram size={12} />
+              </a>
+            )}
+            {candidate.youtubeUrl && (
+              <a href={candidate.youtubeUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-red-600 transition-colors">
+                <Youtube size={12} />
+              </a>
+            )}
+          </div>
+        </div>
         <p className="text-[11px] text-slate-400">{candidate.profession}</p>
         <div className="flex items-center justify-between mt-2">
           <span className="text-base font-black text-slate-900 num">{formatNumber(candidate.votes)}</span>

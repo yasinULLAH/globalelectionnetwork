@@ -266,6 +266,32 @@ export default function AdminCandidatesPage() {
                   <textarea value={form.bio} onChange={e => setForm(f=>({...f,bio:e.target.value}))}
                     placeholder="Short biography…" rows={3} className="input-field resize-none"/>
                 </div>
+
+                <div className="space-y-3 pt-2 border-t border-slate-100">
+                  <h3 className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Social Handles</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 block mb-1">Facebook URL</label>
+                      <input value={form.facebookUrl} onChange={e => setForm(f=>({...f,facebookUrl:e.target.value}))}
+                        placeholder="https://facebook.com/..." className="input-field text-xs"/>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 block mb-1">Twitter URL</label>
+                      <input value={form.twitterUrl} onChange={e => setForm(f=>({...f,twitterUrl:e.target.value}))}
+                        placeholder="https://twitter.com/..." className="input-field text-xs"/>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 block mb-1">Instagram URL</label>
+                      <input value={form.instagramUrl} onChange={e => setForm(f=>({...f,instagramUrl:e.target.value}))}
+                        placeholder="https://instagram.com/..." className="input-field text-xs"/>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 block mb-1">YouTube URL</label>
+                      <input value={form.youtubeUrl} onChange={e => setForm(f=>({...f,youtubeUrl:e.target.value}))}
+                        placeholder="https://youtube.com/..." className="input-field text-xs"/>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="px-5 py-4 border-t border-slate-100 flex gap-3 justify-end bg-slate-50 rounded-b-2xl">
                 <button onClick={handleClose} className="btn-ghost text-sm">Cancel</button>

@@ -8,6 +8,10 @@ export interface Party {
   totalVotes: number;
   foundedYear: number;
   ideology: string;
+  facebookUrl?: string;
+  twitterUrl?: string;
+  instagramUrl?: string;
+  youtubeUrl?: string;
 }
 
 export interface Province {
@@ -53,6 +57,10 @@ export interface Candidate {
   initials: string;
   profession: string;
   photoUrl?: string;
+  facebookUrl?: string;
+  twitterUrl?: string;
+  instagramUrl?: string;
+  youtubeUrl?: string;
 }
 
 export interface Observer {

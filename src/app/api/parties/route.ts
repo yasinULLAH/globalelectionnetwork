@@ -4,7 +4,12 @@ import { query } from '@/lib/db';
 export async function GET(req: NextRequest) {
   try {
     const electionId = new URL(req.url).searchParams.get('electionId');
-    let sql = 'SELECT * FROM parties';
+    let sql = `
+      SELECT *, 
+             facebook_url AS "facebookUrl", twitter_url AS "twitterUrl",
+             instagram_url AS "instagramUrl", youtube_url AS "youtubeUrl"
+      FROM parties
+    `;
     const params: unknown[] = [];
     if (electionId) { sql += ' WHERE election_id=$1'; params.push(electionId); }
     sql += ' ORDER BY seats DESC, total_votes DESC';
@@ -36,9 +41,11 @@ export async function POST(req: NextRequest) {
     }
 
     const [row] = await query(`
-      INSERT INTO parties (name, short_name, color, bg_color, founded_year, ideology, election_id)
-      VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *
-    `, [b.name, b.shortName, b.color, b.bgColor, b.foundedYear ?? null, b.ideology ?? null, electionId]);
+      INSERT INTO parties (name, short_name, color, bg_color, founded_year, ideology, election_id, 
+                           facebook_url, twitter_url, instagram_url, youtube_url)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *
+    `, [b.name, b.shortName, b.color, b.bgColor, b.foundedYear ?? null, b.ideology ?? null, electionId,
+        b.facebookUrl ?? null, b.twitterUrl ?? null, b.instagramUrl ?? null, b.youtubeUrl ?? null]);
     return NextResponse.json({ party: row }, { status: 201 });
   } catch (e: unknown) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });

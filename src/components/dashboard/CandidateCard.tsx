@@ -41,9 +41,33 @@ export default function CandidateCard({ candidate, rank, totalVotes, showLike = 
           <div className="min-w-0">
             <p className="font-extrabold text-slate-900 text-sm leading-tight truncate">{candidate.name}</p>
             <p className="text-xs text-slate-400 mt-0.5">{candidate.profession}</p>
-            <div className="flex items-center gap-1.5 mt-1">
-              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: party?.color }} />
-              <span className="text-xs font-bold" style={{ color: party?.color }}>{party?.shortName}</span>
+            <div className="flex items-center justify-between mt-1">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: party?.color }} />
+                <span className="text-xs font-bold" style={{ color: party?.color }}>{party?.shortName}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {candidate.facebookUrl && (
+                  <a href={candidate.facebookUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-blue-600 transition-colors">
+                    <Facebook size={12} />
+                  </a>
+                )}
+                {candidate.twitterUrl && (
+                  <a href={candidate.twitterUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-sky-400 transition-colors">
+                    <Twitter size={12} />
+                  </a>
+                )}
+                {candidate.instagramUrl && (
+                  <a href={candidate.instagramUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-pink-600 transition-colors">
+                    <Instagram size={12} />
+                  </a>
+                )}
+                {candidate.youtubeUrl && (
+                  <a href={candidate.youtubeUrl} target="_blank" rel="noreferrer" className="text-slate-300 hover:text-red-600 transition-colors">
+                    <Youtube size={12} />
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>

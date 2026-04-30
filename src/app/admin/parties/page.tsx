@@ -41,8 +41,12 @@ export default function AdminPartiesPage() {
 
   const handleEdit = (p: Party) => {
     setEditId(p.id);
-    setForm({ name: p.name, shortName: p.short_name, color: p.color,
-      bgColor: p.bg_color ?? '', foundedYear: String(p.founded_year ?? ''), ideology: p.ideology ?? '' });
+    setForm({ 
+      name: p.name, shortName: p.short_name, color: p.color,
+      bgColor: p.bg_color ?? '', foundedYear: String(p.founded_year ?? ''), ideology: p.ideology ?? '',
+      facebookUrl: p.facebook_url ?? '', twitterUrl: p.twitter_url ?? '', 
+      instagramUrl: p.instagram_url ?? '', youtube_url: p.youtube_url ?? '' 
+    });
     setShowForm(true);
   };
 
@@ -170,6 +174,34 @@ export default function AdminPartiesPage() {
                       className="w-10 h-10 rounded-lg border border-slate-200 cursor-pointer"/>
                     <input value={form.color} onChange={f('color')} placeholder="#16a34a"
                       className="input-field font-mono text-xs"/>
+                  </div>
+                </div>
+              </div>
+              <div className="px-5 py-4 border-t border-slate-100 flex gap-3 justify-end bg-slate-50 rounded-b-2xl">
+                <button onClick={handleClose} className="btn-ghost text-sm">Cancel</button>
+                <button onClick={handleSave} disabled={saving || !form.name || !form.shortName}
+                  className="btn-primary text-sm flex items-center gap-2 disabled:opacity-50">
+                  {saving ? 'Saving…' : <><Check size={14}/> {editId ? 'Save Changes' : 'Add Party'}</>}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+    </div>
+  );
+}
+                     placeholder="https://twitter.com/..." className="input-field text-xs"/>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 block mb-1">Instagram URL</label>
+                      <input value={form.instagramUrl} onChange={f('instagramUrl')}
+                        placeholder="https://instagram.com/..." className="input-field text-xs"/>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-slate-600 block mb-1">YouTube URL</label>
+                      <input value={form.youtubeUrl} onChange={f('youtubeUrl')}
+                        placeholder="https://youtube.com/..." className="input-field text-xs"/>
+                    </div>
                   </div>
                 </div>
               </div>

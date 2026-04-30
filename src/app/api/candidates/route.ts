@@ -10,7 +10,10 @@ export async function GET(req: NextRequest) {
     const search          = searchParams.get('search');
 
     let sql = `
-      SELECT c.*, p.name AS party_name, p.short_name AS party_short,
+      SELECT c.*, c.photo_url AS "photoUrl", 
+             c.facebook_url AS "facebookUrl", c.twitter_url AS "twitterUrl",
+             c.instagram_url AS "instagramUrl", c.youtube_url AS "youtubeUrl",
+             p.name AS party_name, p.short_name AS party_short,
              p.color AS party_color, p.bg_color AS party_bg,
              con.name AS constituency_name, con.code AS constituency_code
       FROM candidates c
@@ -63,13 +66,15 @@ export async function POST(req: NextRequest) {
 
     const [row] = await query(`
       INSERT INTO candidates
-        (name, party_id, constituency_id, election_id, votes, likes, bio, age, education, initials, profession, photo_url)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+        (name, party_id, constituency_id, election_id, votes, likes, bio, age, education, initials, profession, photo_url,
+         facebook_url, twitter_url, instagram_url, youtube_url)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
       RETURNING *
     `, [b.name, b.partyId, b.constituencyId, electionId,
         b.votes ?? 0, b.likes ?? 0, b.bio ?? null, b.age ?? null,
         b.education ?? null, b.initials ?? b.name.slice(0,2).toUpperCase(),
-        b.profession ?? null, b.photoUrl ?? null]);
+        b.profession ?? null, b.photoUrl ?? null,
+        b.facebookUrl ?? null, b.twitterUrl ?? null, b.instagramUrl ?? null, b.youtubeUrl ?? null]);
     return NextResponse.json({ candidate: row }, { status: 201 });
   } catch (e: unknown) {
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });
