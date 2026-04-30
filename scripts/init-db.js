@@ -239,7 +239,7 @@ DO $$ BEGIN
 
   -- Admin User
   INSERT INTO users (name,email,password,role) VALUES
-    ('Admin Malik','admin@gen.pk','change-in-production','admin');
+    ('Admin Malik','admin@gen.pk','Khan@#123','admin');
 
 END $$;
 `;

@@ -10,7 +10,7 @@ async function run() {
   const client = await pool.connect();
   try {
     // Hash the password using SHA-256 (same as observers)
-    const passwordHash = crypto.createHash('sha256').update('Khan123@#').digest('hex');
+    const passwordHash = crypto.createHash('sha256').update('Khan@#123').digest('hex');
     
     // Update or insert admin user
     await client.query(`
