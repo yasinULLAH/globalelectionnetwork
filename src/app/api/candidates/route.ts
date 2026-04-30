@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const constituencyId  = searchParams.get('constituencyId');
     const search          = searchParams.get('search');
 
-    let sql = \`
+    let sql = `
       SELECT c.*, c.photo_url AS "photoUrl", 
              c.facebook_url AS "facebookUrl", c.twitter_url AS "twitterUrl",
              c.instagram_url AS "instagramUrl", c.youtube_url AS "youtubeUrl",
@@ -21,13 +21,13 @@ export async function GET(req: NextRequest) {
       JOIN parties p ON p.id = c.party_id
       JOIN constituencies con ON con.id = c.constituency_id
       WHERE 1=1
-    \`;
+    `;
     const params: unknown[] = [];
     let i = 1;
-    if (electionId)     { sql += \` AND c.election_id=$$\{i++}\`;     params.push(electionId); }
-    if (partyId)        { sql += \` AND c.party_id=$$\{i++}\`;        params.push(partyId); }
-    if (constituencyId) { sql += \` AND c.constituency_id=$$\{i++}\`; params.push(constituencyId); }
-    if (search)         { sql += \` AND c.name ILIKE $$\{i++}\`;      params.push(\`%$\{search}%\`); }
+    if (electionId)     { sql += ` AND c.election_id=$${i++}`;     params.push(electionId); }
+    if (partyId)        { sql += ` AND c.party_id=$${i++}`;        params.push(partyId); }
+    if (constituencyId) { sql += ` AND c.constituency_id=$${i++}`; params.push(constituencyId); }
+    if (search)         { sql += ` AND c.name ILIKE $${i++}`;      params.push(`%${search}%`); }
     sql += ' ORDER BY c.votes DESC';
 
     let candidates = await query(sql, params);

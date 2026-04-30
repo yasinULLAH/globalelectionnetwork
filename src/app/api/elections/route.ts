@@ -4,12 +4,12 @@ import { ELECTIONS } from '@/lib/mockData';
 
 export async function GET() {
   try {
-    const sql = \`
+    const sql = `
       SELECT id, name, country, election_type, region, province, date, status,
              total_seats, total_registered_voters, description, flag_emoji, is_active,
              created_at, updated_at
       FROM elections ORDER BY created_at DESC
-    \`;
+    `;
     let elections = await query(sql);
 
     // Mock Fallback

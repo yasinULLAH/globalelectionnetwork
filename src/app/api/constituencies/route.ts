@@ -8,16 +8,16 @@ export async function GET(req: NextRequest) {
     const electionId = searchParams.get('electionId');
     const type       = searchParams.get('type');
 
-    let sql = \`
+    let sql = `
       SELECT c.*, p.name AS province_name
       FROM constituencies c
       JOIN provinces p ON p.id = c.province_id
       WHERE 1=1
-    \`;
+    `;
     const params: unknown[] = [];
     let i = 1;
-    if (electionId) { sql += \` AND c.election_id=$$\{i++}\`; params.push(electionId); }
-    if (type)       { sql += \` AND c.type=$$\{i++}\`;        params.push(type); }
+    if (electionId) { sql += ` AND c.election_id=$${i++}`; params.push(electionId); }
+    if (type)       { sql += ` AND c.type=$${i++}`;        params.push(type); }
     sql += ' ORDER BY c.code';
 
     let constituencies = await query(sql, params);

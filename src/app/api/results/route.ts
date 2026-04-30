@@ -10,20 +10,20 @@ export async function GET(req: NextRequest) {
     const verified       = searchParams.get('verified');
     const flagged        = searchParams.get('flagged');
 
-    let sql = \`
+    let sql = `
       SELECT r.*, c.name AS constituency_name, c.code AS constituency_code,
              p.color AS party_color, p.short_name AS party_short
       FROM result_entries r
       LEFT JOIN constituencies c ON c.id = r.constituency_id
       LEFT JOIN parties p ON p.id = r.party_id
       WHERE 1=1
-    \`;
+    `;
     const params: unknown[] = [];
     let i = 1;
-    if (electionId)     { sql += \` AND r.election_id=$$\{i++}\`;     params.push(electionId); }
-    if (constituencyId) { sql += \` AND r.constituency_id=$$\{i++}\`; params.push(constituencyId); }
-    if (verified)       { sql += \` AND r.verified=$$\{i++}\`;        params.push(verified === 'true'); }
-    if (flagged)        { sql += \` AND r.flagged=$$\{i++}\`;         params.push(flagged === 'true'); }
+    if (electionId)     { sql += ` AND r.election_id=$${i++}`;     params.push(electionId); }
+    if (constituencyId) { sql += ` AND r.constituency_id=$${i++}`; params.push(constituencyId); }
+    if (verified)       { sql += ` AND r.verified=$${i++}`;        params.push(verified === 'true'); }
+    if (flagged)        { sql += ` AND r.flagged=$${i++}`;         params.push(flagged === 'true'); }
     sql += ' ORDER BY r.submitted_at DESC';
 
     let results = await query(sql, params);

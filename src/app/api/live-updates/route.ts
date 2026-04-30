@@ -11,8 +11,8 @@ export async function GET(req: NextRequest) {
     let sql = 'SELECT * FROM live_updates WHERE 1=1';
     const params: unknown[] = [];
     let i = 1;
-    if (electionId) { sql += \` AND election_id=$$\{i++}\`; params.push(electionId); }
-    sql += \` ORDER BY timestamp DESC LIMIT $$\{i}\`;
+    if (electionId) { sql += ` AND election_id=$${i++}`; params.push(electionId); }
+    sql += ` ORDER BY timestamp DESC LIMIT $${i}`;
     params.push(limit);
 
     let updates = await query(sql, params);

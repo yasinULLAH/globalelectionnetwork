@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
     let sql = 'SELECT * FROM observers WHERE 1=1';
     const params: unknown[] = [];
     let i = 1;
-    if (electionId) { sql += \` AND election_id=$$\{i++}\`; params.push(electionId); }
-    if (status)     { sql += \` AND status=$$\{i++}\`;      params.push(status); }
+    if (electionId) { sql += ` AND election_id=$${i++}`; params.push(electionId); }
+    if (status)     { sql += ` AND status=$${i++}`;      params.push(status); }
     sql += ' ORDER BY joined_at DESC';
 
     let observers = await query(sql, params);
